@@ -106,4 +106,13 @@ contract UChildERC20 is
     {
         ERC20Votes._mint(user, amount);
     }
+
+    /// @notice Recover any tokens mistakenly sent to this 
+    /// contract to the Aavegotchi DAO treasury
+    function recoverERC20(address token, uint256 amount) 
+        public 
+        virtual 
+    {
+        IERC20(token).transfer(0x6fb7e0AAFBa16396Ad6c1046027717bcA25F821f, amount);
+    }
 }
