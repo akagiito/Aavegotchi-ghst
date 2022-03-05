@@ -4,9 +4,11 @@ import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
 import "hardhat-gas-reporter";
+import "@openzeppelin/hardhat-upgrades"
 import "solidity-coverage";
 import "hardhat-abi-exporter";
 import "@typechain/hardhat";
+import "./tasks/deploy.ts";
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -35,6 +37,9 @@ export default {
       {
         version: "0.6.6",
       },
+      {
+        version: "0.8.11",
+      }
     ],
     settings: {
       optimizer: {
@@ -51,7 +56,7 @@ export default {
       allowUnlimitedContractSize: true,
       forking: {
         url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-        blockNumber: 23641001,
+        blockNumber: 25506900,
       }
     },
     local: {
@@ -64,7 +69,8 @@ export default {
     matic: {
       url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      gas: 1000 * 1000 * 1000 * 700,
+      maxFeePerGas: 1000 * 1000 * 1000 * 50,
+      maxPriorityFeePerGas: 1000 * 1000 * 1000,
     },
   },
   gasReporter: {
