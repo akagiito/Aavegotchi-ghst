@@ -5,6 +5,8 @@ import "../utils/NativeMetaTransaction.sol";
 import "../libraries/SafeMath.sol";
 import "./ERC20.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @dev Implementation of the ERC20 Permit extension allowing approvals to be made via signatures, as defined in
  * https://eips.ethereum.org/EIPS/eip-2612[EIP-2612].
@@ -34,6 +36,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, NativeMetaTransaction {
         bytes32 r,
         bytes32 s
     ) public virtual override {
+
         require(block.timestamp <= deadline, "ERC20Permit: expired deadline");
 
         bytes32 structHash = keccak256(abi.encode(_PERMIT_TYPEHASH, owner, spender, value, nonces[owner], deadline));
