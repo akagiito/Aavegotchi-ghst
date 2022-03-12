@@ -246,33 +246,51 @@ describe("Test GHST Implementation", function () {
 
       // Make sure nonce increases
       it("Should be able to permit delegation", async() => {
+        let nonce = await ghst.getNonce(await address(signers[0]));
         await delegationBySig(
           hre, 
           ghst, 
           signers[0] as Wallet, 
           await address(signers[1]), 
-          await ghst.getNonce(await signers[0].getAddress()),
+          nonce,
           BigNumber.from(20469493830),
         );
         expect(await ghst.delegates(await signers[0].getAddress())).to.equal(await signers[1].getAddress());
+        expect(await ghst.getNonce(await address(signers[0]))).to.equal(nonce.add(1));
       });
 
-      it("Permit delegation should fail with an invalid signature");
-
-      it("Should track votes from past blocks");
+      it("Permit delegation should fail with an invalid signature", async() => {
+        let rsv = await delegationRSV(
+          hre,
+          signers[0] as Wallet,
+          await address(signers[1]),
+          await ghst.getNonce(await signers[0].getAddress()),
+          BigNumber.from(20469493830),
+        );
+        await expect(ghst.connect(signers[0]).delegateBySig(
+          await signers[1].getAddress(),
+          await ghst.getNonce(await signers[0].getAddress()),
+          BigNumber.from(20000000000),
+          rsv.v,
+          rsv.r,
+          rsv.s,
+        )).to.be.revertedWith("ERC20Votes: invalid nonce");
+      });
 
       // Make sure nonce increases
       it("Permit should increase allowance", async() => {
+        let nonce = await ghst.getNonce(await address(signers[0]));
         await permit(
           hre,
           ghst,
           signers[0] as Wallet,
           await address(signers[1]),
           BigNumber.from(10000),
-          await ghst.getNonce(await signers[0].getAddress()),
+          nonce,
           BigNumber.from(20469493830),
         )
         expect(await ghst.allowance(await address(signers[0]), await address(signers[1]))).to.equal(BigNumber.from(10000));
+        expect(await ghst.getNonce(await address(signers[0]))).to.equal(nonce.add(1));
 
       });
 
